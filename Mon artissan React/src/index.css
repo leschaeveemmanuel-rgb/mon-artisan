@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  /* On définit des composants réutilisables pour ton site */
+  
+  .btn-primary {
+    @apply py-4 px-6 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl transition-all shadow-lg active:scale-95;
+  }
+
+  .btn-secondary {
+    @apply py-4 px-6 bg-slate-900 hover:bg-black text-white font-bold rounded-2xl transition-all shadow-lg active:scale-95;
+  }
+
+  .card-premium {
+    @apply bg-white rounded-3xl shadow-2xl shadow-blue-900/5 p-10 border border-slate-100 transition-transform hover:scale-[1.01];
+  }
+
+  .input-field {
+    @apply w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none appearance-none font-medium text-slate-700;
+  }
+}
