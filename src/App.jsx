@@ -14,7 +14,7 @@ const App = () => {
       <nav className="bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center sticky top-0 z-50">
         <div className="text-xl font-black text-orange-600 tracking-tighter flex items-center gap-2">
           <Hammer size={24} className="text-orange-600" />
-          MON<span className="text-slate-900">ARTISAN</span>.COM
+          TROUVER<span className="text-slate-900">MON ARTISAN</span>.COM
         </div>
         <button className="flex items-center gap-2 text-slate-500 hover:text-red-600 transition-colors text-sm font-medium">
           <LogOut size={18} /> Se déconnecter
