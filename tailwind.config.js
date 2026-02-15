@@ -5,12 +5,7 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {
-      colors: {
-        // Tu peux définir ici tes couleurs personnalisées si besoin
-        electricBlue: '#1e6091',
-      },
-    },
+    extend: {},
   },
   plugins: [],
 }
