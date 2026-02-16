@@ -129,7 +129,7 @@ const PublierChantier = () => {
           <CheckCircle size={40} />
         </div>
         <h2 className="text-3xl font-bold mb-4">Annonce publiée !</h2>
-        <p className="text-slate-600 mb-8">Votre projet multi-métiers est en ligne. Les artisans concernés pourront vous contacter.</p>
+        <p className="text-slate-600 mb-8">Votre projet multi-compétences est en ligne. Les artisans concernés pourront vous contacter.</p>
         <Link to="/" className="btn-primary bg-slate-900 inline-block">Retour à l'accueil</Link>
       </div>
     );
@@ -143,32 +143,26 @@ const PublierChantier = () => {
         
         <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}>
           <div>
-            <label className="block text-sm font-bold mb-3 text-slate-700">Quels corps de métier recherchez-vous ?</label>
+            <label className="block text-sm font-bold mb-3 text-slate-700">Métiers recherchés</label>
             <div className="flex flex-wrap gap-2">
               {metiers.map(m => (
                 <button
                   key={m}
                   type="button"
                   onClick={() => toggleMetier(m)}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${selectedMetiers.includes(m) ? 'bg-emerald-600 border-emerald-600 text-white shadow-md' : 'bg-white border-slate-200 text-slate-500 hover:border-emerald-300'}`}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${selectedMetiers.includes(m) ? 'bg-emerald-600 border-emerald-600 text-white' : 'bg-white border-slate-200 text-slate-500'}`}
                 >
                   {m}
                 </button>
               ))}
             </div>
           </div>
-          
           <div className="grid md:grid-cols-2 gap-6">
-            <select className="input-field pl-4" required>
-              <option value="">Département du chantier...</option>
-              {departements.map(d => <option key={d.code} value={d.code}>{d.code} - {d.nom}</option>)}
-            </select>
-            <input type="text" className="input-field pl-4" placeholder="Titre (ex: Rénovation appartement)" required />
+            <select className="input-field pl-4" required><option value="">Département...</option>{departements.map(d => <option key={d.code} value={d.code}>{d.code} - {d.nom}</option>)}</select>
+            <input type="text" className="input-field pl-4" placeholder="Titre de l'annonce" required />
           </div>
-
-          <textarea className="input-field pl-4 h-32 py-4" placeholder="Description de vos travaux..." required></textarea>
-
-          <button type="submit" disabled={selectedMetiers.length === 0} className={`btn-primary w-full ${selectedMetiers.length === 0 ? 'bg-slate-300 cursor-not-allowed' : 'bg-emerald-600 hover:bg-emerald-700'}`}>
+          <textarea className="input-field pl-4 h-32 py-4" placeholder="Description..." required></textarea>
+          <button type="submit" disabled={selectedMetiers.length === 0} className={`btn-primary w-full ${selectedMetiers.length === 0 ? 'bg-slate-300' : 'bg-emerald-600 hover:bg-emerald-700'}`}>
             Publier mon projet gratuitement
           </button>
         </form>
@@ -182,13 +176,11 @@ const InscriptionArtisan = () => {
   const [submitted, setSubmitted] = useState(false);
   const [selectedDepts, setSelectedDepts] = useState([]);
   const [selectedMetiersPro, setSelectedMetiersPro] = useState([]);
+  const [presentation, setPresentation] = useState("");
+  const limit = 500;
 
-  const toggleDept = (code) => {
-    setSelectedDepts(prev => prev.includes(code) ? prev.filter(item => item !== code) : [...prev, code]);
-  };
-
-  const toggleMetierPro = (m) => {
-    setSelectedMetiersPro(prev => prev.includes(m) ? prev.filter(item => item !== m) : [...prev, m]);
+  const toggle = (list, setList, item) => {
+    setList(prev => prev.includes(item) ? prev.filter(i => i !== item) : [...prev, item]);
   };
 
   if (submitted) {
@@ -197,8 +189,8 @@ const InscriptionArtisan = () => {
         <div className="w-20 h-20 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center mx-auto mb-6">
           <ShieldCheck size={40} />
         </div>
-        <h2 className="text-3xl font-bold mb-4">Profil créé avec succès !</h2>
-        <p className="text-slate-600 mb-8">Votre fiche professionnelle est prête pour vos métiers et vos départements sélectionnés.</p>
+        <h2 className="text-3xl font-bold mb-4">Profil enregistré !</h2>
+        <p className="text-slate-600 mb-8">Votre fiche professionnelle sera visible après validation par nos équipes.</p>
         <Link to="/" className="btn-primary bg-slate-900 inline-block">Retour à l'accueil</Link>
       </div>
     );
@@ -212,47 +204,56 @@ const InscriptionArtisan = () => {
         
         <form className="space-y-8" onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}>
           
+          {/* Métiers */}
           <div>
-            <label className="block text-sm font-bold mb-3 text-slate-700">Quels sont vos corps de métiers ? (Plusieurs choix)</label>
+            <label className="block text-sm font-bold mb-3 text-slate-700">Vos corps de métiers</label>
             <div className="flex flex-wrap gap-2">
               {metiers.map(m => (
-                <button
-                  key={m}
-                  type="button"
-                  onClick={() => toggleMetierPro(m)}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${selectedMetiersPro.includes(m) ? 'bg-orange-600 border-orange-600 text-white shadow-md' : 'bg-white border-slate-200 text-slate-500 hover:border-orange-300'}`}
-                >
-                  {m}
-                </button>
+                <button key={m} type="button" onClick={() => toggle(selectedMetiersPro, setSelectedMetiersPro, m)}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${selectedMetiersPro.includes(m) ? 'bg-orange-600 border-orange-600 text-white' : 'bg-white border-slate-200 text-slate-500'}`}
+                > {m} </button>
               ))}
             </div>
           </div>
 
+          {/* Départements */}
           <div>
-            <label className="block text-sm font-bold mb-3 text-slate-700">Vos zones d'intervention (Départements)</label>
+            <label className="block text-sm font-bold mb-3 text-slate-700">Zones d'intervention (Départements)</label>
             <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto p-4 bg-slate-50 rounded-2xl border border-slate-100">
               {departements.map(d => (
-                <button
-                  key={d.code}
-                  type="button"
-                  onClick={() => toggleDept(d.code)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${selectedDepts.includes(d.code) ? 'bg-orange-600 border-orange-600 text-white shadow-sm' : 'bg-white border-slate-200 text-slate-500 hover:border-orange-300'}`}
-                >
-                  {d.code} - {d.nom}
-                </button>
+                <button key={d.code} type="button" onClick={() => toggle(selectedDepts, setSelectedDepts, d.code)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${selectedDepts.includes(d.code) ? 'bg-orange-600 border-orange-600 text-white' : 'bg-white border-slate-200 text-slate-500'}`}
+                > {d.code} - {d.nom} </button>
               ))}
             </div>
+          </div>
+
+          {/* Présentation */}
+          <div>
+            <label className="block text-sm font-bold mb-2 text-slate-700 flex justify-between">
+              Présentez votre savoir-faire
+              <span className={`text-xs ${presentation.length > limit ? 'text-red-500' : 'text-slate-400'}`}>
+                {presentation.length} / {limit} caractères
+              </span>
+            </label>
+            <textarea 
+              className={`input-field pl-4 h-32 py-4 resize-none transition-colors ${presentation.length > limit ? 'border-red-500 focus:ring-red-500' : ''}`}
+              placeholder="Ex : Entreprise familiale spécialisée dans la rénovation énergétique depuis 15 ans. Nous intervenons rapidement pour..."
+              value={presentation}
+              onChange={(e) => setPresentation(e.target.value)}
+              required
+            ></textarea>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6">
-            <input type="text" className="input-field pl-4" placeholder="Nom de votre entreprise" required />
-            <input type="tel" className="input-field pl-4" placeholder="Téléphone professionnel" required />
+            <input type="text" className="input-field pl-4" placeholder="Nom de l'entreprise" required />
+            <input type="tel" className="input-field pl-4" placeholder="Téléphone pro" required />
           </div>
 
           <button 
             type="submit" 
-            disabled={selectedDepts.length === 0 || selectedMetiersPro.length === 0} 
-            className={`btn-primary w-full ${ (selectedDepts.length === 0 || selectedMetiersPro.length === 0) ? 'bg-slate-300 cursor-not-allowed' : 'bg-orange-600 hover:bg-orange-700 shadow-orange-200'}`}
+            disabled={selectedDepts.length === 0 || selectedMetiersPro.length === 0 || presentation.length > limit} 
+            className={`btn-primary w-full ${ (selectedDepts.length === 0 || selectedMetiersPro.length === 0 || presentation.length > limit) ? 'bg-slate-300 cursor-not-allowed' : 'bg-orange-600 hover:bg-orange-700 shadow-orange-200'}`}
           >
             Créer mon profil gratuit
           </button>
@@ -295,7 +296,7 @@ const App = () => {
         <Route path="/publier-chantier" element={<PublierChantier />} />
         <Route path="/trouver-chantiers" element={<TrouverChantiers />} />
         <Route path="/inscription-artisan" element={<InscriptionArtisan />} />
-        <Route path="/recherche" element={<div className="p-20 text-center font-bold">Résultats de recherche</div>} />
+        <Route path="/recherche" element={<div className="p-20 text-center font-bold italic">Résultats de recherche (en cours)</div>} />
       </Routes>
 
       <footer className="bg-slate-900 text-slate-400 py-12 px-6 text-center mt-20">
