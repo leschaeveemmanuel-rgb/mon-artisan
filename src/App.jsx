@@ -32,20 +32,23 @@ const Home = ({ selectedDept, setSelectedDept, selectedMetier, setSelectedMetier
             </div>
             <h2 className="text-2xl font-bold mb-3">Espace Professionnel</h2>
             <p className="text-slate-600 mb-6 leading-relaxed">
-              Développez votre activité. Consultez les besoins de chantiers ou proposez vos services à la communauté.
+              Développez votre activité. Proposez vos services ou accédez aux besoins de chantiers de la communauté.
             </p>
             <div className="space-y-3">
-              <button 
-                onClick={() => navigate('/trouver-chantiers')} 
-                className="btn-primary bg-orange-600 hover:bg-orange-700 w-full flex items-center justify-center gap-2"
-              >
-                <List size={20} /> Voir les chantiers
-              </button>
+              {/* BOUTON 1 : Inscription (Gratuit) */}
               <button 
                 onClick={() => navigate('/inscription-artisan')}
-                className="w-full py-4 text-orange-600 font-bold border-2 border-orange-600 rounded-2xl hover:bg-orange-50 transition-all shadow-sm active:scale-95 text-center"
+                className="btn-primary bg-orange-600 hover:bg-orange-700 w-full flex items-center justify-center gap-2"
               >
-                Je propose mes services
+                <PlusCircle size={20} /> Je propose mes services (Gratuit)
+              </button>
+              
+              {/* BOUTON 2 : Liste des chantiers (Abonnés) */}
+              <button 
+                onClick={() => navigate('/trouver-chantiers')} 
+                className="w-full py-4 text-orange-600 font-bold border-2 border-orange-600 rounded-2xl hover:bg-orange-50 transition-all shadow-sm active:scale-95 text-center flex items-center justify-center gap-2"
+              >
+                <List size={20} /> Voir les chantiers (Abonnés)
               </button>
             </div>
           </div>
@@ -61,7 +64,6 @@ const Home = ({ selectedDept, setSelectedDept, selectedMetier, setSelectedMetier
             </p>
             
             <div className="space-y-4">
-              {/* Sélecteur de Métier */}
               <div className="relative">
                 <Wrench className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                 <select 
@@ -76,7 +78,6 @@ const Home = ({ selectedDept, setSelectedDept, selectedMetier, setSelectedMetier
                 </select>
               </div>
 
-              {/* Sélecteur de Département */}
               <div className="relative">
                 <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                 <select 
@@ -114,24 +115,24 @@ const Home = ({ selectedDept, setSelectedDept, selectedMetier, setSelectedMetier
   );
 };
 
-// --- PAGES SECONDAIRES (Vides pour l'instant) ---
+// --- PAGES SECONDAIRES ---
 const PublierChantier = () => (
   <div className="p-20 text-center">
-    <h2 className="text-3xl font-bold">Formulaire de publication</h2>
+    <h2 className="text-3xl font-bold">Publier mon projet (Gratuit)</h2>
     <Link to="/" className="text-orange-600 underline mt-4 inline-block">Retour à l'accueil</Link>
   </div>
 );
 
 const TrouverChantiers = () => (
   <div className="p-20 text-center">
-    <h2 className="text-3xl font-bold">Liste des chantiers pour les Pros</h2>
+    <h2 className="text-3xl font-bold">Chantiers disponibles (Réservé aux abonnés)</h2>
     <Link to="/" className="text-orange-600 underline mt-4 inline-block">Retour à l'accueil</Link>
   </div>
 );
 
 const InscriptionArtisan = () => (
   <div className="p-20 text-center">
-    <h2 className="text-3xl font-bold">Inscription Artisan</h2>
+    <h2 className="text-3xl font-bold">Inscription Artisan (Gratuit)</h2>
     <Link to="/" className="text-orange-600 underline mt-4 inline-block">Retour à l'accueil</Link>
   </div>
 );
