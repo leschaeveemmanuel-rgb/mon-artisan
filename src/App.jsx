@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Routes, Route, useNavigate, Link } from 'react-router-dom';
-import { Briefcase, MapPin, LogOut, Hammer, PlusCircle, List, Wrench, Search } from 'lucide-react';
+import { Briefcase, MapPin, LogOut, Hammer, PlusCircle, List, Wrench, Search, CheckCircle } from 'lucide-react';
 import { departements } from './data/departements';
 import { metiers } from './data/metiers';
 import AdSlot from './components/AdSlot';
@@ -35,7 +35,6 @@ const Home = ({ selectedDept, setSelectedDept, selectedMetier, setSelectedMetier
               Développez votre activité. Proposez vos services ou accédez aux besoins de chantiers de la communauté.
             </p>
             <div className="space-y-3">
-              {/* BOUTON 1 : Inscription (Gratuit) */}
               <button 
                 onClick={() => navigate('/inscription-artisan')}
                 className="btn-primary bg-orange-600 hover:bg-orange-700 w-full flex items-center justify-center gap-2"
@@ -43,7 +42,6 @@ const Home = ({ selectedDept, setSelectedDept, selectedMetier, setSelectedMetier
                 <PlusCircle size={20} /> Je propose mes services (Gratuit)
               </button>
               
-              {/* BOUTON 2 : Liste des chantiers (Abonnés) */}
               <button 
                 onClick={() => navigate('/trouver-chantiers')} 
                 className="w-full py-4 text-orange-600 font-bold border-2 border-orange-600 rounded-2xl hover:bg-orange-50 transition-all shadow-sm active:scale-95 text-center flex items-center justify-center gap-2"
@@ -115,25 +113,94 @@ const Home = ({ selectedDept, setSelectedDept, selectedMetier, setSelectedMetier
   );
 };
 
-// --- PAGES SECONDAIRES ---
-const PublierChantier = () => (
-  <div className="p-20 text-center">
-    <h2 className="text-3xl font-bold">Publier mon projet (Gratuit)</h2>
-    <Link to="/" className="text-orange-600 underline mt-4 inline-block">Retour à l'accueil</Link>
-  </div>
-);
+// --- 2. PAGE PUBLIER UN CHANTIER ---
+const PublierChantier = () => {
+  const [submitted, setSubmitted] = useState(false);
 
+  if (submitted) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-20 text-center">
+        <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
+          <CheckCircle size={40} />
+        </div>
+        <h2 className="text-3xl font-bold mb-4">Annonce publiée !</h2>
+        <p className="text-slate-600 mb-8">Votre projet est maintenant visible par les artisans qualifiés de votre région. Vous recevrez des propositions prochainement.</p>
+        <Link to="/" className="btn-primary bg-slate-900 inline-block">Retour à l'accueil</Link>
+      </div>
+    );
+  }
+
+  return (
+    <main className="max-w-3xl mx-auto px-4 py-12">
+      <div className="bg-white rounded-3xl shadow-xl p-8 border border-slate-100">
+        <h2 className="text-3xl font-bold mb-2 text-slate-800">Décrivez votre projet</h2>
+        <p className="text-slate-500 mb-8 italic text-sm">C'est gratuit et ça prend moins de 2 minutes.</p>
+        
+        <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-bold mb-2 text-slate-700">Type de travaux</label>
+              <select className="input-field pl-4" required>
+                <option value="">Choisir un métier...</option>
+                {metiers.map(m => <option key={m} value={m}>{m}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-bold mb-2 text-slate-700">Département</label>
+              <select className="input-field pl-4" required>
+                <option value="">Où se situe le chantier ?</option>
+                {departements.map(d => <option key={d.code} value={d.code}>{d.code} - {d.nom}</option>)}
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-bold mb-2 text-slate-700">Titre de votre annonce</label>
+            <input type="text" className="input-field pl-4" placeholder="ex: Rénovation complète salle de bain" required />
+          </div>
+
+          <div>
+            <label className="block text-sm font-bold mb-2 text-slate-700">Description des besoins</label>
+            <textarea 
+              className="input-field pl-4 h-32 py-4" 
+              placeholder="Détaillez au maximum pour obtenir des devis précis (surface, matériaux, urgence...)"
+              required
+            ></textarea>
+          </div>
+
+          <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+            <h3 className="font-bold mb-4 flex items-center gap-2"><MapPin size={18} className="text-orange-500"/> Vos coordonnées (Privées)</h3>
+            <div className="grid md:grid-cols-2 gap-4">
+              <input type="email" className="input-field pl-4 bg-white" placeholder="Email" required />
+              <input type="tel" className="input-field pl-4 bg-white" placeholder="Téléphone" required />
+            </div>
+          </div>
+
+          <button type="submit" className="btn-primary w-full bg-emerald-600 hover:bg-emerald-700 shadow-emerald-200">
+            Publier mon projet gratuitement
+          </button>
+        </form>
+      </div>
+    </main>
+  );
+};
+
+// --- 3. AUTRES PAGES (À DÉVELOPPER) ---
 const TrouverChantiers = () => (
-  <div className="p-20 text-center">
-    <h2 className="text-3xl font-bold">Chantiers disponibles (Réservé aux abonnés)</h2>
-    <Link to="/" className="text-orange-600 underline mt-4 inline-block">Retour à l'accueil</Link>
+  <div className="max-w-4xl mx-auto p-20 text-center">
+    <List size={48} className="mx-auto mb-4 text-orange-500 opacity-20" />
+    <h2 className="text-3xl font-bold mb-4">Chantiers disponibles</h2>
+    <p className="text-slate-500 mb-8 text-lg">Cette section sera réservée aux artisans abonnés pour consulter les offres en temps réel.</p>
+    <Link to="/" className="text-orange-600 underline">Retour à l'accueil</Link>
   </div>
 );
 
 const InscriptionArtisan = () => (
-  <div className="p-20 text-center">
-    <h2 className="text-3xl font-bold">Inscription Artisan (Gratuit)</h2>
-    <Link to="/" className="text-orange-600 underline mt-4 inline-block">Retour à l'accueil</Link>
+  <div className="max-w-4xl mx-auto p-20 text-center">
+    <Briefcase size={48} className="mx-auto mb-4 text-orange-500 opacity-20" />
+    <h2 className="text-3xl font-bold mb-4">Devenir Artisan Partenaire</h2>
+    <p className="text-slate-500 mb-8 text-lg">Créez votre profil gratuitement pour apparaître dans l'annuaire.</p>
+    <Link to="/" className="text-orange-600 underline">Retour à l'accueil</Link>
   </div>
 );
 
