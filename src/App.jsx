@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Routes, Route, useNavigate, Link } from 'react-router-dom';
-import { Briefcase, MapPin, LogOut, Hammer, PlusCircle, List, Wrench, Search, CheckCircle, ShieldCheck } from 'lucide-react';
+import { Briefcase, MapPin, LogOut, Hammer, PlusCircle, List, Wrench, Search, CheckCircle, ShieldCheck, ChevronDown } from 'lucide-react';
 import { departements } from './data/departements';
 import { metiers } from './data/metiers';
 import AdSlot from './components/AdSlot';
@@ -116,6 +116,15 @@ const Home = ({ selectedDept, setSelectedDept, selectedMetier, setSelectedMetier
 // --- 2. PAGE PUBLIER UN CHANTIER (Particulier) ---
 const PublierChantier = () => {
   const [submitted, setSubmitted] = useState(false);
+  const [selectedMetiers, setSelectedMetiers] = useState([]);
+
+  const toggleMetier = (metier) => {
+    if (selectedMetiers.includes(metier)) {
+      setSelectedMetiers(selectedMetiers.filter(m => m !== metier));
+    } else {
+      setSelectedMetiers([...selectedMetiers, metier]);
+    }
+  };
 
   if (submitted) {
     return (
@@ -124,7 +133,7 @@ const PublierChantier = () => {
           <CheckCircle size={40} />
         </div>
         <h2 className="text-3xl font-bold mb-4">Annonce publiée !</h2>
-        <p className="text-slate-600 mb-8">Votre projet est maintenant visible. Les artisans qualifiés pourront vous contacter prochainement.</p>
+        <p className="text-slate-600 mb-8">Votre projet multi-corps d'état est maintenant visible. Les artisans concernés pourront vous contacter prochainement.</p>
         <Link to="/" className="btn-primary bg-slate-900 inline-block">Retour à l'accueil</Link>
       </div>
     );
@@ -136,34 +145,56 @@ const PublierChantier = () => {
         <h2 className="text-3xl font-bold mb-2 text-slate-800">Décrivez votre projet</h2>
         <p className="text-slate-500 mb-8 italic text-sm">Service 100% gratuit pour les particuliers.</p>
         
-        <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}>
-          <div className="grid md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-bold mb-2 text-slate-700">Type de travaux</label>
-              <select className="input-field pl-4" required>
-                <option value="">Choisir un métier...</option>
-                {metiers.map(m => <option key={m} value={m}>{m}</option>)}
-              </select>
+        <form className="space-y-8" onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}>
+          
+          {/* SÉLECTION MULTIPLE DES MÉTIERS */}
+          <div>
+            <label className="block text-sm font-bold mb-4 text-slate-700">De quels corps de métier avez-vous besoin ? (Plusieurs choix possibles)</label>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {metiers.map(m => (
+                <div 
+                  key={m}
+                  onClick={() => toggleMetier(m)}
+                  className={`cursor-pointer border-2 rounded-xl p-3 text-sm font-medium transition-all text-center flex items-center justify-center
+                    ${selectedMetiers.includes(m) 
+                      ? 'border-emerald-500 bg-emerald-50 text-emerald-700 shadow-sm' 
+                      : 'border-slate-100 bg-slate-50 text-slate-500 hover:border-slate-300'}`}
+                >
+                  {m}
+                </div>
+              ))}
             </div>
+            {selectedMetiers.length === 0 && <p className="text-red-400 text-xs mt-2">Veuillez sélectionner au moins un métier.</p>}
+          </div>
+
+          <div className="grid md:grid-cols-1 gap-6">
             <div>
-              <label className="block text-sm font-bold mb-2 text-slate-700">Département</label>
+              <label className="block text-sm font-bold mb-2 text-slate-700">Dans quel département se situe le chantier ?</label>
               <select className="input-field pl-4" required>
-                <option value="">Où se situe le chantier ?</option>
+                <option value="">Sélectionner le département...</option>
                 {departements.map(d => <option key={d.code} value={d.code}>{d.code} - {d.nom}</option>)}
               </select>
             </div>
           </div>
+
           <div>
             <label className="block text-sm font-bold mb-2 text-slate-700">Titre de votre annonce</label>
-            <input type="text" className="input-field pl-4" placeholder="ex: Rénovation complète salle de bain" required />
+            <input type="text" className="input-field pl-4" placeholder="ex: Rénovation complète salle de bain (Plomberie + Carrelage)" required />
           </div>
+
           <div>
-            <label className="block text-sm font-bold mb-2 text-slate-700">Description des besoins</label>
-            <textarea className="input-field pl-4 h-32 py-4" placeholder="Détaillez vos besoins..." required></textarea>
+            <label className="block text-sm font-bold mb-2 text-slate-700">Description détaillée</label>
+            <textarea className="input-field pl-4 h-32 py-4" placeholder="Précisez l'ampleur des travaux pour chaque corps de métier choisi..." required></textarea>
           </div>
-          <button type="submit" className="btn-primary w-full bg-emerald-600 hover:bg-emerald-700 shadow-emerald-200">
+
+          <button 
+            type="submit" 
+            disabled={selectedMetiers.length === 0}
+            className={`btn-primary w-full shadow-lg transition-all ${selectedMetiers.length === 0 ? 'bg-slate-300 cursor-not-allowed' : 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-200'}`}
+          >
             Publier mon projet gratuitement
           </button>
+          <Link to="/" className="block text-center text-slate-400 text-sm hover:underline">Annuler et revenir</Link>
         </form>
       </div>
     </main>
@@ -181,7 +212,7 @@ const InscriptionArtisan = () => {
           <ShieldCheck size={40} />
         </div>
         <h2 className="text-3xl font-bold mb-4">Profil créé !</h2>
-        <p className="text-slate-600 mb-8">Bienvenue dans la communauté. Votre profil est en cours de validation. Vous pourrez bientôt apparaître dans les résultats de recherche.</p>
+        <p className="text-slate-600 mb-8">Votre fiche est en cours de validation. Vous recevrez un email dès qu'elle sera visible dans l'annuaire.</p>
         <Link to="/" className="btn-primary bg-slate-900 inline-block">Retour à l'accueil</Link>
       </div>
     );
@@ -197,70 +228,32 @@ const InscriptionArtisan = () => {
           <div className="grid md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-bold mb-2 text-slate-700">Nom de l'entreprise</label>
-              <input type="text" className="input-field pl-4" placeholder="ex: Jean Dupont Électricité" required />
+              <input type="text" className="input-field pl-4" placeholder="ex: SAS Dupont Rénov" required />
             </div>
             <div>
-              <label className="block text-sm font-bold mb-2 text-slate-700">Corps de métier principal</label>
+              <label className="block text-sm font-bold mb-2 text-slate-700">Métier principal</label>
               <select className="input-field pl-4" required>
                 <option value="">Sélectionner...</option>
                 {metiers.map(m => <option key={m} value={m}>{m}</option>)}
               </select>
             </div>
           </div>
-
-          <div className="grid md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-bold mb-2 text-slate-700">Zone d'intervention (Dépt)</label>
-              <select className="input-field pl-4" required>
-                <option value="">Votre département...</option>
-                {departements.map(d => <option key={d.code} value={d.code}>{d.code} - {d.nom}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-bold mb-2 text-slate-700">Années d'expérience</label>
-              <input type="number" className="input-field pl-4" placeholder="ex: 10" required />
-            </div>
-          </div>
-
-          <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 space-y-4">
-            <h3 className="font-bold text-slate-800">Contact & Visibilité</h3>
-            <div className="grid md:grid-cols-2 gap-4">
-              <input type="email" className="input-field pl-4 bg-white" placeholder="Email professionnel" required />
-              <input type="tel" className="input-field pl-4 bg-white" placeholder="Téléphone" required />
-            </div>
-            <textarea className="input-field pl-4 h-24 bg-white py-4" placeholder="Courte présentation de votre savoir-faire..."></textarea>
-          </div>
-
           <button type="submit" className="btn-primary w-full bg-orange-600 hover:bg-orange-700 shadow-orange-200">
             Créer mon profil gratuit
           </button>
-          <Link to="/" className="block text-center text-slate-400 text-sm mt-4 hover:underline">Retour à l'accueil</Link>
         </form>
       </div>
     </main>
   );
 };
 
-// --- 4. PAGE LISTE DES CHANTIERS (Placeholder) ---
+// --- 4. PAGE LISTE DES CHANTIERS (Pro) ---
 const TrouverChantiers = () => (
   <main className="max-w-6xl mx-auto px-4 py-12">
-    <div className="mb-8">
-      <h2 className="text-3xl font-bold text-slate-800">Chantiers disponibles</h2>
-      <p className="text-slate-500 italic text-sm">Abonnement PRO requis pour accéder aux détails.</p>
-    </div>
-    <div className="grid gap-4 opacity-60">
-      {[1, 2, 3].map((i) => (
-        <div key={i} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-          <div className="h-4 w-24 bg-slate-200 rounded mb-4"></div>
-          <div className="h-6 w-3/4 bg-slate-100 rounded mb-2"></div>
-          <div className="h-10 bg-slate-50 rounded border border-dashed border-slate-200 mt-4"></div>
-        </div>
-      ))}
-    </div>
-    <div className="text-center mt-12 bg-orange-50 p-8 rounded-3xl border border-orange-100">
-      <h3 className="text-xl font-bold mb-4">Accès réservé</h3>
-      <p className="text-slate-600 mb-6">Cette section nécessite un abonnement actif pour consulter et répondre aux offres.</p>
-      <button className="btn-primary bg-orange-600 inline-block px-8">Voir les formules</button>
+    <div className="text-center bg-orange-50 p-12 rounded-3xl border border-orange-100">
+      <h3 className="text-2xl font-bold mb-4">Accès aux chantiers</h3>
+      <p className="text-slate-600 mb-8 max-w-md mx-auto">Cette section permet aux abonnés de contacter directement les particuliers ayant publié un projet.</p>
+      <button className="btn-primary bg-orange-600 px-8">Voir les abonnements</button>
     </div>
   </main>
 );
@@ -277,11 +270,9 @@ const App = () => {
           <Hammer size={24} className="text-orange-600" />
           TROUVER<span className="text-slate-900">MON ARTISAN</span>.COM
         </Link>
-        <div className="flex gap-4">
-          <button className="text-slate-400 hover:text-red-600 transition-colors">
-            <LogOut size={18} />
-          </button>
-        </div>
+        <button className="flex items-center gap-2 text-slate-500 hover:text-red-600 transition-colors text-sm font-medium">
+          <LogOut size={18} /> Se déconnecter
+        </button>
       </nav>
 
       <Routes>
