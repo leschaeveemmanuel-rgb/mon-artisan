@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Routes, Route, useNavigate, Link } from 'react-router-dom';
-import { Briefcase, MapPin, LogOut, Hammer, PlusCircle, List, Wrench, Search, CheckCircle, ShieldCheck, ChevronDown } from 'lucide-react';
+import { Briefcase, MapPin, LogOut, Hammer, PlusCircle, List, Wrench, Search, CheckCircle, ShieldCheck } from 'lucide-react';
 import { departements } from './data/departements';
 import { metiers } from './data/metiers';
 import AdSlot from './components/AdSlot';
@@ -118,12 +118,8 @@ const PublierChantier = () => {
   const [submitted, setSubmitted] = useState(false);
   const [selectedMetiers, setSelectedMetiers] = useState([]);
 
-  const toggleMetier = (metier) => {
-    if (selectedMetiers.includes(metier)) {
-      setSelectedMetiers(selectedMetiers.filter(m => m !== metier));
-    } else {
-      setSelectedMetiers([...selectedMetiers, metier]);
-    }
+  const toggleMetier = (m) => {
+    setSelectedMetiers(prev => prev.includes(m) ? prev.filter(item => item !== m) : [...prev, m]);
   };
 
   if (submitted) {
@@ -133,68 +129,48 @@ const PublierChantier = () => {
           <CheckCircle size={40} />
         </div>
         <h2 className="text-3xl font-bold mb-4">Annonce publiée !</h2>
-        <p className="text-slate-600 mb-8">Votre projet multi-corps d'état est maintenant visible. Les artisans concernés pourront vous contacter prochainement.</p>
+        <p className="text-slate-600 mb-8">Votre projet multi-métiers est en ligne. Les artisans concernés pourront vous contacter.</p>
         <Link to="/" className="btn-primary bg-slate-900 inline-block">Retour à l'accueil</Link>
       </div>
     );
   }
 
   return (
-    <main className="max-w-3xl mx-auto px-4 py-12">
+    <main className="max-w-4xl mx-auto px-4 py-12">
       <div className="bg-white rounded-3xl shadow-xl p-8 border border-slate-100">
         <h2 className="text-3xl font-bold mb-2 text-slate-800">Décrivez votre projet</h2>
-        <p className="text-slate-500 mb-8 italic text-sm">Service 100% gratuit pour les particuliers.</p>
+        <p className="text-slate-500 mb-8 italic text-sm">Service gratuit pour les particuliers.</p>
         
-        <form className="space-y-8" onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}>
-          
-          {/* SÉLECTION MULTIPLE DES MÉTIERS */}
+        <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}>
           <div>
-            <label className="block text-sm font-bold mb-4 text-slate-700">De quels corps de métier avez-vous besoin ? (Plusieurs choix possibles)</label>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <label className="block text-sm font-bold mb-3 text-slate-700">Quels corps de métier recherchez-vous ?</label>
+            <div className="flex flex-wrap gap-2">
               {metiers.map(m => (
-                <div 
+                <button
                   key={m}
+                  type="button"
                   onClick={() => toggleMetier(m)}
-                  className={`cursor-pointer border-2 rounded-xl p-3 text-sm font-medium transition-all text-center flex items-center justify-center
-                    ${selectedMetiers.includes(m) 
-                      ? 'border-emerald-500 bg-emerald-50 text-emerald-700 shadow-sm' 
-                      : 'border-slate-100 bg-slate-50 text-slate-500 hover:border-slate-300'}`}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${selectedMetiers.includes(m) ? 'bg-emerald-600 border-emerald-600 text-white shadow-md' : 'bg-white border-slate-200 text-slate-500 hover:border-emerald-300'}`}
                 >
                   {m}
-                </div>
+                </button>
               ))}
             </div>
-            {selectedMetiers.length === 0 && <p className="text-red-400 text-xs mt-2">Veuillez sélectionner au moins un métier.</p>}
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-6">
+            <select className="input-field pl-4" required>
+              <option value="">Département du chantier...</option>
+              {departements.map(d => <option key={d.code} value={d.code}>{d.code} - {d.nom}</option>)}
+            </select>
+            <input type="text" className="input-field pl-4" placeholder="Titre (ex: Rénovation appartement)" required />
           </div>
 
-          <div className="grid md:grid-cols-1 gap-6">
-            <div>
-              <label className="block text-sm font-bold mb-2 text-slate-700">Dans quel département se situe le chantier ?</label>
-              <select className="input-field pl-4" required>
-                <option value="">Sélectionner le département...</option>
-                {departements.map(d => <option key={d.code} value={d.code}>{d.code} - {d.nom}</option>)}
-              </select>
-            </div>
-          </div>
+          <textarea className="input-field pl-4 h-32 py-4" placeholder="Description de vos travaux..." required></textarea>
 
-          <div>
-            <label className="block text-sm font-bold mb-2 text-slate-700">Titre de votre annonce</label>
-            <input type="text" className="input-field pl-4" placeholder="ex: Rénovation complète salle de bain (Plomberie + Carrelage)" required />
-          </div>
-
-          <div>
-            <label className="block text-sm font-bold mb-2 text-slate-700">Description détaillée</label>
-            <textarea className="input-field pl-4 h-32 py-4" placeholder="Précisez l'ampleur des travaux pour chaque corps de métier choisi..." required></textarea>
-          </div>
-
-          <button 
-            type="submit" 
-            disabled={selectedMetiers.length === 0}
-            className={`btn-primary w-full shadow-lg transition-all ${selectedMetiers.length === 0 ? 'bg-slate-300 cursor-not-allowed' : 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-200'}`}
-          >
+          <button type="submit" disabled={selectedMetiers.length === 0} className={`btn-primary w-full ${selectedMetiers.length === 0 ? 'bg-slate-300 cursor-not-allowed' : 'bg-emerald-600 hover:bg-emerald-700'}`}>
             Publier mon projet gratuitement
           </button>
-          <Link to="/" className="block text-center text-slate-400 text-sm hover:underline">Annuler et revenir</Link>
         </form>
       </div>
     </main>
@@ -204,6 +180,16 @@ const PublierChantier = () => {
 // --- 3. PAGE INSCRIPTION ARTISAN (Pro) ---
 const InscriptionArtisan = () => {
   const [submitted, setSubmitted] = useState(false);
+  const [selectedDepts, setSelectedDepts] = useState([]);
+  const [selectedMetiersPro, setSelectedMetiersPro] = useState([]);
+
+  const toggleDept = (code) => {
+    setSelectedDepts(prev => prev.includes(code) ? prev.filter(item => item !== code) : [...prev, code]);
+  };
+
+  const toggleMetierPro = (m) => {
+    setSelectedMetiersPro(prev => prev.includes(m) ? prev.filter(item => item !== m) : [...prev, m]);
+  };
 
   if (submitted) {
     return (
@@ -211,34 +197,63 @@ const InscriptionArtisan = () => {
         <div className="w-20 h-20 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center mx-auto mb-6">
           <ShieldCheck size={40} />
         </div>
-        <h2 className="text-3xl font-bold mb-4">Profil créé !</h2>
-        <p className="text-slate-600 mb-8">Votre fiche est en cours de validation. Vous recevrez un email dès qu'elle sera visible dans l'annuaire.</p>
+        <h2 className="text-3xl font-bold mb-4">Profil créé avec succès !</h2>
+        <p className="text-slate-600 mb-8">Votre fiche professionnelle est prête pour vos métiers et vos départements sélectionnés.</p>
         <Link to="/" className="btn-primary bg-slate-900 inline-block">Retour à l'accueil</Link>
       </div>
     );
   }
 
   return (
-    <main className="max-w-3xl mx-auto px-4 py-12">
+    <main className="max-w-4xl mx-auto px-4 py-12">
       <div className="bg-white rounded-3xl shadow-xl p-8 border border-slate-100">
         <h2 className="text-3xl font-bold mb-2 text-slate-800">Devenir Artisan Partenaire</h2>
-        <p className="text-slate-500 mb-8 italic text-sm">Créez votre fiche professionnelle gratuitement.</p>
+        <p className="text-slate-500 mb-8 italic text-sm">Créez votre fiche multi-compétences gratuitement.</p>
         
-        <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}>
-          <div className="grid md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-bold mb-2 text-slate-700">Nom de l'entreprise</label>
-              <input type="text" className="input-field pl-4" placeholder="ex: SAS Dupont Rénov" required />
-            </div>
-            <div>
-              <label className="block text-sm font-bold mb-2 text-slate-700">Métier principal</label>
-              <select className="input-field pl-4" required>
-                <option value="">Sélectionner...</option>
-                {metiers.map(m => <option key={m} value={m}>{m}</option>)}
-              </select>
+        <form className="space-y-8" onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}>
+          
+          <div>
+            <label className="block text-sm font-bold mb-3 text-slate-700">Quels sont vos corps de métiers ? (Plusieurs choix)</label>
+            <div className="flex flex-wrap gap-2">
+              {metiers.map(m => (
+                <button
+                  key={m}
+                  type="button"
+                  onClick={() => toggleMetierPro(m)}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${selectedMetiersPro.includes(m) ? 'bg-orange-600 border-orange-600 text-white shadow-md' : 'bg-white border-slate-200 text-slate-500 hover:border-orange-300'}`}
+                >
+                  {m}
+                </button>
+              ))}
             </div>
           </div>
-          <button type="submit" className="btn-primary w-full bg-orange-600 hover:bg-orange-700 shadow-orange-200">
+
+          <div>
+            <label className="block text-sm font-bold mb-3 text-slate-700">Vos zones d'intervention (Départements)</label>
+            <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto p-4 bg-slate-50 rounded-2xl border border-slate-100">
+              {departements.map(d => (
+                <button
+                  key={d.code}
+                  type="button"
+                  onClick={() => toggleDept(d.code)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${selectedDepts.includes(d.code) ? 'bg-orange-600 border-orange-600 text-white shadow-sm' : 'bg-white border-slate-200 text-slate-500 hover:border-orange-300'}`}
+                >
+                  {d.code} - {d.nom}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            <input type="text" className="input-field pl-4" placeholder="Nom de votre entreprise" required />
+            <input type="tel" className="input-field pl-4" placeholder="Téléphone professionnel" required />
+          </div>
+
+          <button 
+            type="submit" 
+            disabled={selectedDepts.length === 0 || selectedMetiersPro.length === 0} 
+            className={`btn-primary w-full ${ (selectedDepts.length === 0 || selectedMetiersPro.length === 0) ? 'bg-slate-300 cursor-not-allowed' : 'bg-orange-600 hover:bg-orange-700 shadow-orange-200'}`}
+          >
             Créer mon profil gratuit
           </button>
         </form>
@@ -247,13 +262,13 @@ const InscriptionArtisan = () => {
   );
 };
 
-// --- 4. PAGE LISTE DES CHANTIERS (Pro) ---
+// --- 4. PAGE CHANTIERS ---
 const TrouverChantiers = () => (
-  <main className="max-w-6xl mx-auto px-4 py-12">
-    <div className="text-center bg-orange-50 p-12 rounded-3xl border border-orange-100">
-      <h3 className="text-2xl font-bold mb-4">Accès aux chantiers</h3>
-      <p className="text-slate-600 mb-8 max-w-md mx-auto">Cette section permet aux abonnés de contacter directement les particuliers ayant publié un projet.</p>
-      <button className="btn-primary bg-orange-600 px-8">Voir les abonnements</button>
+  <main className="max-w-6xl mx-auto px-4 py-12 text-center">
+    <div className="bg-orange-50 p-12 rounded-3xl border border-orange-100">
+      <h2 className="text-3xl font-bold mb-4 text-slate-800">Chantiers disponibles</h2>
+      <p className="text-slate-600 mb-8 max-w-md mx-auto">Section réservée aux abonnés pour consulter les offres en temps réel.</p>
+      <button className="btn-primary bg-orange-600 px-8 shadow-lg shadow-orange-200">Voir les abonnements</button>
     </div>
   </main>
 );
@@ -270,32 +285,25 @@ const App = () => {
           <Hammer size={24} className="text-orange-600" />
           TROUVER<span className="text-slate-900">MON ARTISAN</span>.COM
         </Link>
-        <button className="flex items-center gap-2 text-slate-500 hover:text-red-600 transition-colors text-sm font-medium">
-          <LogOut size={18} /> Se déconnecter
+        <button className="flex items-center gap-2 text-slate-400 hover:text-red-600 transition-colors">
+          <LogOut size={18} />
         </button>
       </nav>
 
       <Routes>
-        <Route path="/" element={
-          <Home 
-            selectedDept={selectedDept} setSelectedDept={setSelectedDept} 
-            selectedMetier={selectedMetier} setSelectedMetier={setSelectedMetier} 
-          />
-        } />
+        <Route path="/" element={<Home selectedDept={selectedDept} setSelectedDept={setSelectedDept} selectedMetier={selectedMetier} setSelectedMetier={setSelectedMetier} />} />
         <Route path="/publier-chantier" element={<PublierChantier />} />
         <Route path="/trouver-chantiers" element={<TrouverChantiers />} />
         <Route path="/inscription-artisan" element={<InscriptionArtisan />} />
-        <Route path="/recherche" element={<div className="p-20 text-center">Résultats de recherche</div>} />
+        <Route path="/recherche" element={<div className="p-20 text-center font-bold">Résultats de recherche</div>} />
       </Routes>
 
       <footer className="bg-slate-900 text-slate-400 py-12 px-6 text-center mt-20">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="text-white font-bold flex items-center gap-2 text-lg italic uppercase">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6 text-sm">
+          <div className="text-white font-bold flex items-center gap-2 text-lg uppercase italic">
             <Hammer size={20} className="text-orange-500" /> MONARTISAN.COM
           </div>
-          <div className="text-sm">
-            © 2026 – Propulsé par <a href="https://www.skyboundstudio.fr" className="text-orange-500 font-bold hover:underline">Skybound Studio</a>
-          </div>
+          <div>© 2026 – Propulsé par <a href="https://www.skyboundstudio.fr" className="text-orange-500 font-bold hover:underline">Skybound Studio</a></div>
         </div>
       </footer>
     </div>
